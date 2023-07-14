@@ -63,7 +63,7 @@ public class PoliceEntity {
     @JoinColumn(name = "Periodicite_id")
     private PeriodiciteEntity periodicite;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "Prd_VersionCommerciale_id")
     private PrdVersioncommercialeEntity prdVersioncommerciale;
 

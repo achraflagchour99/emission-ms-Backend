@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IPoliceService {
     PoliceDTO addPolice(PoliceDTO policeDTO);
-    PoliceDTO updatePolice(Long policeId, PoliceDTO policeDTO);
+    PoliceDTO updatePolice(String codePolice, PoliceDTO policeDTO);
     List<PoliceDTO> getAllPolices();
     Page<PoliceDTO> getPoliceByCriteres(PoliceSearchCriteriaDTO policeSearchCriteriaDTO, int pageNo, int pageSize);
     PoliceDTO getPoliceByCodePolice(String codePolice);

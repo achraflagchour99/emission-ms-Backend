@@ -4,9 +4,9 @@ package com.rmaassurance.emissiondirecte.services.ImpleService;
 import com.rmaassurance.emissiondirecte.dtos.request.PoliceSearchCriteriaDTO;
 import com.rmaassurance.emissiondirecte.dtos.request.PrdVersioncommercialeDTO;
 import com.rmaassurance.emissiondirecte.dtos.request.RefVilleDTO;
-import com.rmaassurance.emissiondirecte.entities.PoliceEntity;
+import com.rmaassurance.emissiondirecte.entities.*;
 import com.rmaassurance.emissiondirecte.mapper.PoliceEntityMapper;
-import com.rmaassurance.emissiondirecte.repositories.PoliceEntityRepository;
+import com.rmaassurance.emissiondirecte.repositories.*;
 import com.rmaassurance.emissiondirecte.services.Iservice.IPoliceService;
 import com.rmaassurance.emissiondirecte.dtos.request.PoliceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,21 @@ public class PoliceServiceImpl implements IPoliceService {
 
     private final PoliceEntityRepository policeRepository;
     private final PoliceEntityMapper policeEntityMapper;
+    private final PrdVersioncommercialeEntityRepository prdVersioncommerciale;
+    private final RefVilleEntityRepository refVilleRepository;
+    private final PeriodiciteRepository periodiciteRepository;
+    private final RefPoliceEntityRepository refPoliceEntityRepository;
+    private final IntermediaireEntityRepository intermediaireEntityRepository;
 
     @Autowired
-    public PoliceServiceImpl(PoliceEntityRepository policeRepository, PoliceEntityMapper policeEntityMapper) {
+    public PoliceServiceImpl(PoliceEntityRepository policeRepository, PoliceEntityMapper policeEntityMapper, PoliceEntityRepository prdVersioncommerciale, PrdVersioncommercialeEntityRepository prdVersioncommerciale1, RefVilleEntityRepository refVilleRepository, PeriodiciteRepository periodiciteRepository, RefPoliceEntityRepository refPoliceEntityRepository, IntermediaireEntityRepository intermediaireEntityRepository) {
         this.policeRepository = policeRepository;
         this.policeEntityMapper = policeEntityMapper;
+        this.prdVersioncommerciale = prdVersioncommerciale1;
+        this.refVilleRepository = refVilleRepository;
+        this.periodiciteRepository = periodiciteRepository;
+        this.refPoliceEntityRepository = refPoliceEntityRepository;
+        this.intermediaireEntityRepository = intermediaireEntityRepository;
     }
 
     @Override
@@ -40,12 +50,23 @@ public class PoliceServiceImpl implements IPoliceService {
     }
 
     @Override
-    public PoliceDTO updatePolice(Long policeId,PoliceDTO policeDTO) {
-        PoliceEntity police = policeRepository.findById(policeId).orElseThrow(() -> new RuntimeException("Police not found"));
+    public PoliceDTO updatePolice(String codePolice, PoliceDTO policeDTO) {
+        PoliceEntity police = policeRepository.findByCodePolice(codePolice);
+        PrdVersioncommercialeEntity versioncommerciale = prdVersioncommerciale.findById(policeDTO.getPrdVersioncommerciale().getId()).get();
+        RefVilleEntity refVille = refVilleRepository.findById(policeDTO.getRefVille().getId()).get();
+        IntermediaireEntity intermediaire = intermediaireEntityRepository.findById(policeDTO.getIntermediaire().getId()).get();
+        PeriodiciteEntity periodicite = periodiciteRepository.findById(policeDTO.getPeriodicite().getId()).get();
+        RefPoliceEntity refPolice = refPoliceEntityRepository.findById(policeDTO.getRefPolice().getId()).get();
+        police.setPrdVersioncommerciale(versioncommerciale);
+        police.setRefVille(refVille);
+        police.setIntermediaire(intermediaire);
+        police.setPeriodicite(periodicite);
+        police.setRefPolice(refPolice);
         policeEntityMapper.partialUpdate(policeDTO, police);
         PoliceEntity updatedPolice = policeRepository.save(police);
         return policeEntityMapper.toDto(updatedPolice);
     }
+
 
     @Override
     public List<PoliceDTO> getAllPolices() {

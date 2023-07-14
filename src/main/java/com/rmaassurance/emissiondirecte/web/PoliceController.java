@@ -32,9 +32,9 @@ public class PoliceController {
                 .body(savedPoliceDTO);
     }
 
-    @PutMapping("/{policeId}")
-    public ResponseEntity<PoliceDTO> updatePolice(@PathVariable Long policeId, @RequestBody @Validated PoliceDTO policeDTO) {
-        PoliceDTO updatedPoliceDTO = policeService.updatePolice(policeId, policeDTO);
+    @PutMapping("/{codePolice}")
+    public ResponseEntity<PoliceDTO> updatePolice(@PathVariable String codePolice, @RequestBody @Validated PoliceDTO policeDTO) {
+        PoliceDTO updatedPoliceDTO = policeService.updatePolice(codePolice, policeDTO);
         return ResponseEntity.ok(updatedPoliceDTO);
     }
 
